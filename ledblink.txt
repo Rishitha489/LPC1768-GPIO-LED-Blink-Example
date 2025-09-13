@@ -1,0 +1,41 @@
+#include <lpc17xx.h>
+#include <stdint.h>
+
+/* Macros for readability */
+#define P           LPC_GPIO1
+#define LED1        (1 << 19)
+#define LED2        (1 << 25)
+
+/* Function to create delay in ms (approx.) */
+void delay_ms(uint16_t ms)
+{
+    uint16_t i, j;
+    for (i = 0; i < ms; i++)
+    {
+        for (j = 0; j < 1000; j++);
+    }
+}
+
+/* Function to blink LEDs n times */
+void blink_leds(uint8_t times, uint16_t delay_time)
+{
+    for (uint8_t k = 0; k < times; k++)
+    {
+        P->FIOSET = LED1 | LED2;  // Turn ON LEDs
+        delay_ms(delay_time);
+        P->FIOCLR = LED1 | LED2;  // Turn OFF LEDs
+        delay_ms(delay_time);
+    }
+}
+
+int main(void)
+{
+    /* Configure LED pins as output */
+    P->FIODIR |= (LED1 | LED2);
+
+    while (1)
+    {
+        blink_leds(3, 500);   // Blink both LEDs 3 times (0.5s delay)
+        delay_ms(2000);       // 2s pause before next sequence
+    }
+}
